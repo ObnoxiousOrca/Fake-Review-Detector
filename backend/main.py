@@ -46,7 +46,6 @@ def linguistic_features(text):
     }
 
 def explain(text, score):
-    # These are observable cues, not causal explanations from the model.
     cues=[]
     words=re.findall(r"\b\w+\b",text.lower())
     if len(words)<8: cues.append("very short text")
@@ -60,8 +59,6 @@ def make_row(req, numeric_columns, config):
     text=req.text
     f=linguistic_features(text)
     f["rating"]=req.rating if req.rating is not None else np.nan
-    # At inference, per-reviewer/product counts are unknown unless the extension
-    # sends aggregate metadata. Use missing values; imputer handles them.
     f["reviewer_review_count"]=np.nan
     f["product_review_count"]=np.nan
     ts=pd.to_datetime(req.timestamp,errors="coerce",utc=True) if req.timestamp else pd.NaT
@@ -83,8 +80,10 @@ def predict_one(req):
     score=round(10*human_prob,1)
     if score>=8.5: label="Most Likely Human"
     elif score>=7.0: label="Probably Human"
-    elif score>=5.0: label="Uncertain"
-    elif score>=3.0: label="Probably Fake"
+    elif score>5.0: label="Possibly Human"
+    elif score==5.0: label="Uncertain"
+    elif score>4.0: label="Possibly Fake"
+    elif score>=2.0: label="Probably Fake"
     else: label="Most Likely Fake"
     return {"score":score,"label":label,"human_probability":round(human_prob,4),
             "explanation_cues":explain(req.text,score),

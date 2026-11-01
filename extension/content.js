@@ -69,11 +69,20 @@
   function addBadge(el, result) {
     let badge=el.querySelector(":scope > ."+BADGE_CLASS);
     if(!badge){badge=document.createElement("span");badge.className=BADGE_CLASS;el.appendChild(badge);}
-    badge.textContent=`${Number(result.score).toFixed(1)} • ${result.label}`;
+    const score=Number(result.score);
+    badge.textContent=`${score.toFixed(1)} • ${result.label}`;
     badge.dataset.score=result.score;
     badge.title=(result.explanation_cues||[]).join(", ")+" — estimate only";
-    badge.classList.toggle("rrc-human",result.score>=7);
-    badge.classList.toggle("rrc-fake",result.score<5);
+    const scoreClasses=["rrc-mlh","rrc-probh","rrc-posb","rrc-posf","rrc-probf","rrc-mlf"];
+    const scoreClass=score>=8.5 ? "rrc-mlh"
+      : score>=7 ? "rrc-probh"
+      : score>5 ? "rrc-posb"
+      : score===5 ? null
+      : score>4 ? "rrc-posf"
+      : score>=2 ? "rrc-probf"
+      : "rrc-mlf";
+    badge.classList.remove(...scoreClasses);
+    if(scoreClass) badge.classList.add(scoreClass);
     el.classList.add("rrc-review-host");
   }
   async function score(el) {

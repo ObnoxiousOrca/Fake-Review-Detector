@@ -29,8 +29,6 @@ put reviews.csv inside backend folder and run
 python train.py --csv reviews.csv --text-col text --label-col label --human-label 0
 ```
 
-For the classic Ott dataset, you may need to combine its separate files and set the correct labels/columns first. The `--human-label` value must match the genuine label in your CSV exactly (case-insensitive); every other label is treated as non-human/deceptive for this binary baseline.
-
 The script:
 1. Drops rows without labels.
 2. Creates a stratified 80/20 train/test split by default.

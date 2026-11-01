@@ -61,8 +61,6 @@ def build_features(df, args):
     numeric=ling.copy()
     if args.rating_col and args.rating_col in df:
         numeric["rating"] = pd.to_numeric(df[args.rating_col], errors="coerce")
-    # Behavioural features are calculated using available metadata; reviewer-level
-    # statistics are computed from the whole unlabeled feature table, not target values.
     if args.reviewer_col and args.reviewer_col in df:
         ids=df[args.reviewer_col].fillna("__missing__").astype(str)
         counts=ids.value_counts()
@@ -96,7 +94,6 @@ def main():
     df=df.dropna(subset=[args.label_col]).copy()
     df[args.label_col]=df[args.label_col].astype(str).str.strip()
     human_label=str(args.human_label).strip()
-    # Binary mapping: human label -> 1; all other labels -> 0.
     y=(df[args.label_col].str.casefold()==human_label.casefold()).astype(int)
     if y.nunique()!=2:
         raise ValueError(

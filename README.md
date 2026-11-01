@@ -23,10 +23,10 @@ pip install -r requirements.txt
 
 ## 2. Train using your CSV
 
-Example only; replace path and column names with those in your CSV:
+put reviews.csv inside backend folder and run
 
 ```bash
-python train.py --csv "C:\\data\\reviews.csv" --text-col review_text --label-col label --human-label genuine --reviewer-col reviewer_id --product-col product_id --rating-col rating --timestamp-col timestamp
+python train.py --csv reviews.csv --text-col text --label-col label --human-label 0
 ```
 
 For the classic Ott dataset, you may need to combine its separate files and set the correct labels/columns first. The `--human-label` value must match the genuine label in your CSV exactly (case-insensitive); every other label is treated as non-human/deceptive for this binary baseline.
